@@ -37,11 +37,18 @@ app.get('/api/protected', ensureToken, (req, res) => {
 
 function ensureToken(req, res, next) {
 	const bearerHeader = req.headers['authorization'];
-	if (typeof bearerHeader!== 'undefined') {
+	if (typeof bearerHeader !== 'undefined') {
 		const bearer = bearerHeader.split(' ');
+		const tokenType = bearer[0];
 		const bearerToken = bearer[1];
-		req.token = bearerToken;
-		next();
+
+		if (tokenType !== 'Bearer') {
+			res.sendStatus(403);
+		} else {
+			req.token = bearerToken;
+			// next();
+			res.sendStatus(200);
+		}
 	} else {
 		res.sendStatus(403);
 	}
